@@ -1,15 +1,29 @@
 import { useEffect, useState } from "react";
-import { Container, VStack, Heading, Text, Box, Image, Link, Button } from "@chakra-ui/react";
+import { Container, VStack, Heading, Text, Box, Image, Link, Button, useToast } from "@chakra-ui/react";
 import { FaTwitter, FaGithub, FaLinkedin } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
 
 const Index = () => {
   const [posts, setPosts] = useState([]);
+  const toast = useToast();
 
   useEffect(() => {
     const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     setPosts(storedPosts);
   }, []);
+
+  const handleDelete = (index) => {
+    const updatedPosts = posts.filter((_, i) => i !== index);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
+    setPosts(updatedPosts);
+    toast({
+      title: "Post deleted.",
+      description: "The blog post has been deleted.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  };
 
   return (
     <Container centerContent maxW="container.md" py={8}>
@@ -39,6 +53,7 @@ const Index = () => {
               <Heading fontSize="xl">{post.title}</Heading>
               <Text mt={4}>{post.content}</Text>
               <Text mt={4} fontSize="sm" color="gray.500">{new Date(post.date).toLocaleString()}</Text>
+              <Button colorScheme="red" size="sm" onClick={() => handleDelete(index)}>Delete</Button>
             </Box>
           ))}
         </VStack>
