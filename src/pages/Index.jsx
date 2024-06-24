@@ -1,9 +1,18 @@
-import { Container, VStack, Heading, Text, Box, Image, Link } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Container, VStack, Heading, Text, Box, Image, Link, Button } from "@chakra-ui/react";
 import { FaTwitter, FaGithub, FaLinkedin } from "react-icons/fa";
+import { Link as RouterLink } from "react-router-dom";
 
 const Index = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+    setPosts(storedPosts);
+  }, []);
+
   return (
-    <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+    <Container centerContent maxW="container.md" py={8}>
       <VStack spacing={4}>
         <Heading as="h1" size="2xl">Welcome to My Blog</Heading>
         <Text fontSize="lg" textAlign="center">
@@ -22,6 +31,16 @@ const Index = () => {
           <Link href="https://linkedin.com" isExternal>
             <FaLinkedin size="24px" />
           </Link>
+        </VStack>
+        <Button as={RouterLink} to="/add-post" colorScheme="teal" size="lg">Add New Post</Button>
+        <VStack spacing={4} w="100%">
+          {posts.map((post, index) => (
+            <Box key={index} p={5} shadow="md" borderWidth="1px" w="100%">
+              <Heading fontSize="xl">{post.title}</Heading>
+              <Text mt={4}>{post.content}</Text>
+              <Text mt={4} fontSize="sm" color="gray.500">{new Date(post.date).toLocaleString()}</Text>
+            </Box>
+          ))}
         </VStack>
       </VStack>
     </Container>
